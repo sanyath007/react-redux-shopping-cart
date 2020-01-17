@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import utils from '../utils';
 import { fetchProducts } from '../actions/productActions';
+import { addToCart } from '../actions/cartActions';
 
 class Products extends Component {
   componentDidMount() {
@@ -10,12 +11,12 @@ class Products extends Component {
   }
 
   render() {
-    const { products, handleAddToCart } = this.props;
+    const { products, cartItems, addToCart } = this.props;
     
     const productItems = products && products.map(product => (
       <div className="col-md-4" key={product.id}>
         <div className="thumbnail text-center">
-          <a href={`#${product.id}`} onClick={(e) => handleAddToCart(e, product)}>
+          <a href={`#${product.id}`} onClick={() => addToCart(cartItems, product)}>
             <img src={`/products/${product.sku}_2.jpg`} alt={product.title} />
             <p>
               {product.title}
@@ -23,7 +24,7 @@ class Products extends Component {
           </a>
           <div>
             <b>{utils.formatCurrency(product.price)}</b>
-            <button onClick={(e) => handleAddToCart(e, product)} className="btn btn-primary">
+            <button onClick={() => addToCart(cartItems, product)} className="btn btn-primary">
               Add To Cart
             </button>
           </div>
@@ -40,10 +41,11 @@ class Products extends Component {
 }
 
 const mapStateToProps = state => ({
-  products: state.products.filteredItems
+  products: state.products.filteredItems,
+  cartItems: state.cart.items
 });
 
 export default connect(
   mapStateToProps,
-  { fetchProducts }
+  { fetchProducts, addToCart }
 )(Products);

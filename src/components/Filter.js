@@ -4,12 +4,12 @@ import { filterProducts, sortProducts } from '../actions/productActions';
 
 class Filter extends Component {
   render() {
-    const { size, sort, count, products, sortProducts, filterProducts } = this.props;
+    const { size, sort, products, filteredProducts, sortProducts, filterProducts } = this.props;
 
     return (
       <div className="row">
         <div className="col-md-4">
-          { count } products found.
+          { filteredProducts.length } products found.
         </div>
         <div className="col-md-4">
           <label>
@@ -17,7 +17,7 @@ class Filter extends Component {
             <select 
               className="form-control" 
               value={sort} 
-              onChange={e => sortProducts(products, e.target.value)}
+              onChange={e => sortProducts(filteredProducts, e.target.value)}
             >
               <option value="">Select</option>
               <option value="lowest">Lowest to highest</option>
@@ -50,6 +50,7 @@ class Filter extends Component {
 
 const mapStateToProps = state => ({
   products: state.products.items,
+  filteredProducts: state.products.filteredItems,
   size: state.products.size,
   sort: state.products.sort
 });
