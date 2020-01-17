@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import utils from '../utils';
+import { fetchProducts } from '../actions/productActions';
 
 class Products extends Component {
+  componentDidMount() {
+    this.props.fetchProducts()
+  }
+
   render() {
     const { products, handleAddToCart } = this.props;
     
@@ -32,4 +39,11 @@ class Products extends Component {
   }
 }
 
-export default Products;
+const mapStateToProps = state => ({
+  products: state.products.items
+});
+
+export default connect(
+  mapStateToProps,
+  { fetchProducts }
+)(Products);

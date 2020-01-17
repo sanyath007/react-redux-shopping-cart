@@ -21,16 +21,7 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    fetch('http://localhost:8000/products')
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          products: data,
-          filteredProducts: data
-        })
-      });
-    
+  componentDidMount() {    
     if(localStorage.getItem('cartItems')) {
       this.setState({ 
         cartItems: JSON.parse(localStorage.getItem('cartItems'))
@@ -117,31 +108,33 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
-        <h1>Ecommerce Shopping Cart App</h1>
-        <hr />
+      <Provider store={store}>
+        <div className="container">
+          <h1>Ecommerce Shopping Cart App</h1>
+          <hr />
 
-        <div className="row">
-          <div className="col-md-8">
-            <Filter 
-              size={this.state.size} 
-              sort={this.state.sort}
-              handleChangeSize={this.handleChangeSize}
-              handleChangeSort={this.handleChangeSort}
-              count={this.state.filteredProducts.length} />
-            
-            <hr />
+          <div className="row">
+            <div className="col-md-8">
+              <Filter 
+                size={this.state.size} 
+                sort={this.state.sort}
+                handleChangeSize={this.handleChangeSize}
+                handleChangeSort={this.handleChangeSort}
+                count={this.state.filteredProducts.length} />
+              
+              <hr />
 
-            <Products 
-              products={this.state.filteredProducts} 
-              handleAddToCart={this.handleAddToCart} />
+              <Products 
+                products={this.state.filteredProducts} 
+                handleAddToCart={this.handleAddToCart} />
 
-          </div>
-          <div className="col-md-4">
-            <Basket cartItems={this.state.cartItems} handleRemoveFromCart={this.handleRemoveFromCart} />
+            </div>
+            <div className="col-md-4">
+              <Basket cartItems={this.state.cartItems} handleRemoveFromCart={this.handleRemoveFromCart} />
+            </div>
           </div>
         </div>
-      </div>
+      </Provider>
     );
   }
 }
