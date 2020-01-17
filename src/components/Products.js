@@ -40,7 +40,7 @@ class Products extends Component {
 }
 
 const mapStateToProps = state => ({
-  products: state.products.items
+  products: state.products.filteredItems
 });
 
 export default connect(
