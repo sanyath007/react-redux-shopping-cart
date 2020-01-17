@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
+import { Provider } from 'react-redux';
 
 import './App.css';
 import Products from './components/Products';
 import Filter from './components/Filter';
+import Basket from './components/Basket';
+
+import store from './store';
 
 class App extends Component {
   constructor(props) {
@@ -10,7 +14,10 @@ class App extends Component {
 
     this.state = {
       products: [],
-      filteredProducts: []
+      filteredProducts: [],
+      size: '',
+      sort: '',
+      cartItems: []
     };
   }
 
@@ -20,25 +27,68 @@ class App extends Component {
       .then(data => {
         this.setState({
           products: data,
-          filteredProducts: data,
-          size: '',
-          sort: ''
+          filteredProducts: data
         })
       });
+    
+    if(localStorage.getItem('cartItems')) {
+      this.setState({ 
+        cartItems: JSON.parse(localStorage.getItem('cartItems'))
+      });
+    }
   }
 
   handleAddToCart = (e, product) => {
-    console.log(product)
+    console.log('Add to cart');
+    console.log(this.state);
+
+    this.setState(state => {
+      const cartItems = state.cartItems;
+      let productAlreadyInCart = false;
+
+      cartItems.forEach(item => {
+        if(item.id === product.id) {
+          productAlreadyInCart = true;
+          item.count++;
+        }
+      });
+      
+      if(!productAlreadyInCart) {
+        cartItems.push({ ...product, count: 1 });
+      }
+
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+      console.log({cartItems});
+      return {cartItems};
+    });
+  }
+
+  handleRemoveFromCart = (e, item) => {
+    console.log('Remove from cart');
+    console.log(this.state);
+
+    this.setState(state => {
+      const cartItems = state.cartItems.filter(elm => elm.id !== item.id);
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+      console.log({cartItems});
+      return {cartItems};
+    });
   }
 
   handleChangeSize = e => {
-    console.log('Size products')
+    console.log('Size products');
+    console.log(this.state);
+
     this.setState({size: e.target.value});
     this.listProducts();
   }
   
   handleChangeSort = e => {
-    console.log('Sort products')
+    console.log('Sort products');
+    console.log(this.state);
+
     this.setState({sort: e.target.value});
     this.listProducts();
   }
@@ -67,7 +117,7 @@ class App extends Component {
 
   render() {
     return (
-      <div className="Container">
+      <div className="container">
         <h1>Ecommerce Shopping Cart App</h1>
         <hr />
 
@@ -79,13 +129,16 @@ class App extends Component {
               handleChangeSize={this.handleChangeSize}
               handleChangeSort={this.handleChangeSort}
               count={this.state.filteredProducts.length} />
+            
+            <hr />
 
             <Products 
               products={this.state.filteredProducts} 
               handleAddToCart={this.handleAddToCart} />
+
           </div>
           <div className="col-md-4">
-
+            <Basket cartItems={this.state.cartItems} handleRemoveFromCart={this.handleRemoveFromCart} />
           </div>
         </div>
       </div>
